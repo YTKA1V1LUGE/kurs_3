@@ -6,6 +6,7 @@ Visa Platinum 7000 79** **** 6361 -> Счет **9638
 """
 import json
 import datetime
+
 """
 import requests
 import json
@@ -31,8 +32,10 @@ def load_random_word():
 
 
 def load_operation_json():
-    """Функция получение слов"""
-    with open("operations.json", "r", encoding = "utf=8") as operation_file:
+    """
+    :return: Возвращение списка операция
+    """
+    with open("operations.json", "r", encoding="utf=8") as operation_file:
         return json.load(operation_file)
 
 
@@ -57,7 +60,7 @@ def correct_date():
     """
     full_date_operation = (sort_operation()[1])
     date_operation = "".join(full_date_operation)
-    date_operation = date_operation .split("T")[0]
+    date_operation = date_operation.split("T")[0]
     date_operation = date_operation.split("-")
     year = date_operation[0]
     month = date_operation[1]
@@ -81,23 +84,52 @@ def correct_format():
     json_operation = load_operation_json()
     full_date_operation = correct_date()[1]
     for operation in json_operation:
-        if "date" in operation:
-            if operation["date"] == full_date_operation:
-                id_operation = operation["id"]
-                state_operation = operation["state"]
-                adjacent_meaning = operation["operationAmount"]      #не помню как словарь в словаре
-                amount_operation = adjacent_meaning["amount"]
-                adjacent = adjacent_meaning["currency"]
-                print(adjacent["name"])
+        #   if "date" in operation:
+        if operation["date"] == full_date_operation:
+            id_operation = operation["id"]  # id
+            state_operation = operation["state"]  # Статус
+            operation_amount = (operation["operationAmount"])["amount"]  # Сумма перевода
+            name_operation = (operation["operationAmount"])["currency"]["name"]  # Валюта
+            description_operation = operation["description"]  # описание перевода
+            from_operation = operation["from"]
+            to_operation = operation["to"]
+            return id_operation, state_operation, operation_amount, name_operation, description_operation, from_operation, to_operation
 
+
+cor = correct_format()
+
+
+print(f"""{correct_date()} 
+{cor[4]} 
+{cor[5]} -> 
+{cor[6]} 
+{cor[2]} 
+{cor[3]}""")
 """
-- `state` — статус перевода:
-    - `EXECUTED`  — выполнена,
-    - `CANCELED`  — отменена.
-- `operationAmount` — сумма операции и валюта
-- `description` — описание типа перевода
-- `from` — откуда (может отсутстовать)
-- `to` — куда"""
+# Пример вывода для одной операции:
+14.10.2018 Перевод организации
+Visa Platinum 7000 79** **** 6361 -> Счет **9638
+82771.72 руб."""
 
 
-print(correct_format())
+class Account_transactions:
+    """ Класс для показа сообщений об операциях """
+    def __init__(self, original_word, valid_word_set):  #      original_word - исходное слово, ,original_word, valid_word_set
+        self.original_word = original_word
+        self.valid_word_set = valid_word_set
+        self.user_response = None
+
+
+    def __repr__(self):    # не понимаю что сюда нужно прописывать
+       return "Класс для проверки ввода слов"
+
+
+    def word_check(self):   #проверка введеного слова на допустимые слова
+        if self.user_response in self.valid_word_set:
+            return True
+        else:
+            return False
+
+
+    def word_count(self):       #количество допустимых слов
+        return len(self.valid_word_set)
