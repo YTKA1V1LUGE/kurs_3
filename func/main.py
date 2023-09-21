@@ -4,3 +4,7 @@
 Visa Platinum 7000 79** **** 6361 -> Счет **9638
 82771.72 руб.
 """
+import func
+
+messedge_operasion = func.account_transactions(func.load_operation_json())
+messedge_operasion.print_messenge()
