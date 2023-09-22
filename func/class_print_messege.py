@@ -18,7 +18,7 @@ class account_transactions:
         """
         self.date_operation = []    # список для смежных операций
         self.date = []  # список последних 5 операция
-        self.load_operation_json = operation_json   # получение операций
+        self.load_operation_json = operation_json   #   получение операций
         self.full_date_operation = []   # список для дат последних 5 операций
         self.id_operation = ""
         self.state_operation = ""
@@ -39,7 +39,6 @@ class account_transactions:
         for operation in self.load_operation_json:
             if "date" in operation:
                 self.date_operation.append(operation["date"])
-
         self.date_operation.sort()
         self.full_date_operation = list(reversed(self.date_operation[-5:]))
         return self.full_date_operation
@@ -153,6 +152,9 @@ class account_transactions:
 {self.from_operation} -> {self.to_operation}
 {self.operation_amount} {self.name_operation}\n""")
 
+#a = account_transactions(load_operation_json())
+
+#print(a.sort_operation())
 
 """
 # Пример вывода для одной операции:
