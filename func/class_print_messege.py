@@ -1,12 +1,12 @@
 import json
 import datetime
+import os
 
 
 def load_operation_json():
-    """
-    :return: Возвращение списка операция
-    """
-    with open("operations.json", "r", encoding="utf=8") as operation_file:
+    utils_path = os.path.dirname(__file__)
+    operation_path = os.path.join(utils_path, "operations.json")
+    with open(operation_path, "r", encoding="utf=8") as operation_file:
         return json.load(operation_file)
 
 
@@ -36,9 +36,9 @@ class account_transactions:
         """
         :return: 5 последних операция
         """
-        for operation in self.load_operation_json:
-            if "date" in operation:
-                self.date_operation.append(operation["date"])
+        for operation in range(len(self.load_operation_json)):
+            if "date" in self.load_operation_json[operation]:
+                self.date_operation.append(self.load_operation_json[operation]["date"])
         self.date_operation.sort()
         self.full_date_operation = list(reversed(self.date_operation[-5:]))
         return self.full_date_operation
@@ -133,7 +133,7 @@ class account_transactions:
             sender_number = "**" + sender_number[-4:]
             return f"Visa Classic {sender_number}"
 
-    def print_messenge(self):
+    def print_message(self):
         for operation in self.receiving_data():
             self.id_operation = operation["id"]  # id
             self.correct_date = self.correct_format_date(operation["date"])
@@ -147,14 +147,10 @@ class account_transactions:
                 self.from_operation = self.from_card_hide(operation["from"])
             else:
                 pass
-
             print(f"""{self.correct_date} {self.description_operation}
 {self.from_operation} -> {self.to_operation}
 {self.operation_amount} {self.name_operation}\n""")
 
-#a = account_transactions(load_operation_json())
-
-#print(a.sort_operation())
 
 """
 # Пример вывода для одной операции:
