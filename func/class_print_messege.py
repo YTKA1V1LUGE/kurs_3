@@ -16,7 +16,6 @@ class account_transactions:
         А что нужно прописывать в self?
         :param operation_json: список операция
         """
-        self.date_operation = []  # список для смежных операций
         self.date = []  # список последних 5 операция
         self.load_operation_json = operation_json  # получение операций
         self.full_date_operation = []  # список для дат последних 5 операций
@@ -29,7 +28,7 @@ class account_transactions:
         self.to_operation = ""
         self.correct_date = ""
         self.card_types = {
-            "Visa Classic": (13, 6),  # 6 символов которые надо скрыть
+            "Visa Classic": (13, 6),  # 1 - сколько символов с строке, 6 символов которые надо скрыть
             "MasterCard": (11, 6),
             "Maestro": (8, 6),
             "Счет": (5, 6),
@@ -49,7 +48,8 @@ class account_transactions:
             (operation["date"] for operation in self.load_operation_json if "date" in operation), reverse=True)[:5]
         return self.full_date_operation
 
-    def correct_format_date(self, original_date):
+    @staticmethod
+    def correct_format_date(original_date):
         datetime_obj = datetime.strptime(original_date, "%Y-%m-%dT%H:%M:%S.%f")
         correct_date = datetime_obj.strftime("%d.%m.%Y")
         return correct_date
@@ -96,19 +96,20 @@ class account_transactions:
     def print_message(self):
         for operation in self.receiving_data():
             self.id_operation = operation["id"]  # id
-            self.correct_date = self.correct_format_date(operation["date"]) #дата операции
+            self.correct_date = self.correct_format_date(operation["date"])  #дата операции
             self.state_operation = operation["state"]  # Статус
             self.operation_amount = operation["operationAmount"]["amount"]  # Сумма перевода
             self.name_operation = operation["operationAmount"]["currency"]["name"]  # Валюта
             self.description_operation = operation["description"]  # описание перевода
-            self.to_operation = self.to_card_hide(operation["to"])
+            self.to_operation = self.to_card_hide(operation["to"])  # куда перевод
             if "from" in operation:
-                self.from_operation = self.from_card_hide(operation["from"])
+                self.from_operation = self.from_card_hide(operation["from"])  #откуда перевод
             else:
                 pass
             print(f"""{self.correct_date} {self.description_operation}
 {self.from_operation} -> {self.to_operation}
 {self.operation_amount} {self.name_operation}\n""")
+
 
 """
 # Пример вывода для одной операции:
