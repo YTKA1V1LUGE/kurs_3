@@ -1,8 +1,7 @@
 import pytest
 from func import class_print_messege
 
-operation_json = [
-        {
+operation_json = [{
             "id": 441945886,
             "state": "EXECUTED",
             "date": "2019-08-26T10:50:58.294041",
@@ -31,9 +30,7 @@ operation_json = [
             "description": "Перевод организации",
             "from": "MasterCard 7158300734726758",
             "to": "Счет 35383033474447895560"
-        }
-    ]
-
+        }]
 
 account = class_print_messege.account_transactions(operation_json)
 
