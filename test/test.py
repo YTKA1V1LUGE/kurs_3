@@ -1,53 +1,84 @@
-# import func.class_print_messege
-import json
+import pytest
 from func import class_print_messege
-import func
 
-# где- то еще проверку есть ли фром ли нет
-load = {'date': '2019-11-13T17:38:04.800051',
-        'description': 'Перевод со счета на счет',
-        'from': 'Счет 38611439522855669794',
-        'id': 482520625,
-        'operationAmount': {'amount': '62814.53',
-                            'currency': {'code': 'RUB', 'name': 'руб.'}},
-        'state': 'EXECUTED',
-        'to': 'Счет 46765464282437878125'}
+operation_json = [
+        {
+            "id": 441945886,
+            "state": "EXECUTED",
+            "date": "2019-08-26T10:50:58.294041",
+            "operationAmount": {
+                "amount": "31957.58",
+                "currency": {
+                    "name": "руб.",
+                    "code": "RUB"
+                }
+            },
+            "description": "Перевод организации",
+            "from": "Maestro 1596837868705199",
+            "to": "Счет 64686473678894779589"
+        },
+        {
+            "id": 41428829,
+            "state": "EXECUTED",
+            "date": "2019-07-03T18:35:29.512364",
+            "operationAmount": {
+                "amount": "8221.37",
+                "currency": {
+                    "name": "USD",
+                    "code": "USD"
+                }
+            },
+            "description": "Перевод организации",
+            "from": "MasterCard 7158300734726758",
+            "to": "Счет 35383033474447895560"
+        }
+    ]
 
 
+account = class_print_messege.account_transactions(operation_json)
 
-function = class_print_messege.account_transactions(class_print_messege.load_operation_json())
 
-
-def test_correct_format_date():  ###
-    assert function.correct_format_date("2019-11-13T17:38:04.800051") == "13.11.2019"
+def test_correct_format_date():
+    original_date = "2022-01-01T12:00:00.000000"
+    expected_result = "01.01.2022"
+    assert account.correct_format_date(original_date) == expected_result
 
 
 def test_sort_operation():
-    assert function.sort_operation()[4] == '2019-11-13T17:38:04.800051'
+    expected_result = ['2019-08-26T10:50:58.294041', "2019-07-03T18:35:29.512364"]
+    assert account.sort_operation() == expected_result
 
 
 def test_receiving_data():
-    assert function.receiving_data()[4] == load
+    expected_result = operation_json[0]
+    assert account.receiving_data()[0] == expected_result
 
 
 def test_from_card_hide():
-    assert function.from_card_hide("Счет 38611439522855669794") == "Счет 3861 14** **** **** 9794 "
+    sender_number = "Visa Classic 1234567890123456"
+    expected_result = "Visa Classic 1234 56** **** 3456 "
+    assert account.from_card_hide(sender_number) == expected_result
 
 
 def test_to_card_hide():
-    assert function.to_card_hide("Счет 46765464282437878125") == "Счет **8125"
+    sender_number = "MasterCard 1234567890123456"
+    expected_result = "MasterCard **3456"
+    assert account.to_card_hide(sender_number) == expected_result
 
 
-def test_print_message():
-    assert function.print_message() == None
+def test_print_message(capsys):
+    account.print_message()
+    captured = capsys.readouterr()
+    expected_output = """26.08.2019 Перевод организации
+Maestro 1596 83** **** 5199  -> Счет **9589
+31957.58 руб.
+
+03.07.2019 Перевод организации
+MasterCard 7158 30** **** 6758  -> Счет **5560
+8221.37 USD
+\n"""
+    assert captured.out == expected_output
 
 
-"""
-def test_load_operation_json():
-    with open("../func/operations.json", "r", encoding="utf=8") as operation_file:
-        js = json.load(operation_file)
-    if js == load:
-        print(js)
-    else:
-        print(0)
-"""
+# Run the tests
+pytest.main()
