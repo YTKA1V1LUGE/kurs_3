@@ -57,6 +57,7 @@ def test_receiving_data():
 def test_from_card_hide():
     sender_number = "Visa Classic 1234567890123456"
     expected_result = "Visa Classic 1234 56** **** 3456 "
+    assert account.from_card_hide("") is None
     assert account.from_card_hide(sender_number) == expected_result
 
 

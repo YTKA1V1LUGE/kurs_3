@@ -86,7 +86,6 @@ class account_transactions:
                 for el in b:
                     string += el + " "
                 return f"{card_type} {string}"
-
     def to_card_hide(self, sender_number):
         for card_type, values in self.card_types.items():
             if card_type in sender_number:
