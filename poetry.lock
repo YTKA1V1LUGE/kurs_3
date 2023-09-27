@@ -79,6 +79,17 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 toml = ["tomli"]
 
 [[package]]
+name = "datadispatch"
+version = "1.0.0"
+description = "Like functools.singledispatch but for values"
+optional = false
+python-versions = "*"
+files = [
+    {file = "datadispatch-1.0.0-py3-none-any.whl", hash = "sha256:527ad534881d7f6144a8ff643c260a3d2ae0d50e8ee24ec4b0fdae72d6c7beab"},
+    {file = "datadispatch-1.0.0.tar.gz", hash = "sha256:3c0456934e99f21137332deebbda05713dc07fcb142dfc01ef83d6b17aeaf08e"},
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.3"
 description = "Backport of PEP 654 (exception groups)"
@@ -170,6 +181,20 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
+name = "tasks"
+version = "2.8.0"
+description = "A simple personal task queue to track todo items"
+optional = false
+python-versions = "*"
+files = [
+    {file = "tasks-2.8.0-py3-none-any.whl", hash = "sha256:94b6a20b2790717102e194d8ae2da5a84ee0cf509589f37d4192328237a9053a"},
+    {file = "tasks-2.8.0.tar.gz", hash = "sha256:0f145014df82f27e965ed2453225fc6dca6430c4fb7492a819125de53f8657d0"},
+]
+
+[package.dependencies]
+datadispatch = "*"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -183,4 +208,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ccf1e98b41f1d5e3887063536297cd1e452086ad1ac7a372eaf1b5b0e03adf74"
+content-hash = "45c60ea8b3b1841c50c624e38d45097c44acbcdeb3d23ad0ff28c93783abcdcb"
