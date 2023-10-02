@@ -4,6 +4,9 @@ import os
 
 
 def load_operation_json():
+    """
+    :return: возвращаем список json
+    """
     utils_path = os.path.dirname(__file__)
     operation_path = os.path.join(utils_path, "operations.json")
     with open(operation_path, "r", encoding="utf=8") as operation_file:
@@ -12,8 +15,8 @@ def load_operation_json():
 
 def filter_by_status(load_operation_lists):
     """
-    :param load_operation_lists: общий список операций
-    :return: список операций которые выполнены
+    :param load_operation_lists: получаем общий список операций
+    :return: возвращаем список операций которые выполнены
     """
     filter_by = []  # список выполненых операций
     load_operation = load_operation_lists
@@ -32,7 +35,6 @@ def sort_operation(load_operation):
     :return: Список из последних 5 операций
     """
     load = load_operation
-
     sorted_lol = sorted(load, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%dT%H:%M:%S.%f"), reverse=True)[:5]
 
     return sorted_lol
@@ -72,7 +74,6 @@ def to_card_hide(recipient_number):
     recipient_number_list = recipient_number.split()  # преобразование входной строки в список
 
     number = recipient_number_list.pop(-1)  # забираем именно цифры
-
     number = "**" + number[-4:]
 
     return f"{''.join(recipient_number_list)} {number}"
