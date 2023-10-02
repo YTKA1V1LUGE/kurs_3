@@ -31,20 +31,6 @@ def correct_format_date(original_date):
     return correct_date
 
 
-"""
-def receiving_data():
-    
-    date = []
-    full_date_operation = self.sort_operation(load_operation)
-    for date in range(len(full_date_operation)): 
-        for operation in load_operation_json():  
-            if "date" in operation:
-                if full_date_operation[date] == operation["date"]:
-                    date.append(operation)
-    return date
-"""
-
-
 def receiving_data(date_operation):
     """
     Функция для получениие 5 последних операций
@@ -124,10 +110,3 @@ def print_message(dates):
 {from_operation} -> {to_operation}
 {operation_amount} {name_operation}\n""")
 
-
-"""
-# Пример вывода для одной операции:
-14.10.2018 Перевод организации
-Visa Platinum 7000 79** **** 6361 -> Счет **9638
-82771.72 руб.
-"""
