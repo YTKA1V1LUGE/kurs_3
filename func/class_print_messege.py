@@ -32,6 +32,7 @@ def sort_operation(load_operation):
     :return: Список из последних 5 операций
     """
     load = load_operation
+
     sorted_lol = sorted(load, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%dT%H:%M:%S.%f"), reverse=True)[:5]
 
     return sorted_lol
@@ -57,7 +58,6 @@ def from_card_hide(sender_number):
     number = number_list.pop(-1)  # забираем именно цифры
 
     number = number[:6] + '*' * (len(number) - 10) + number[-4:]  # изменяем часть цифр на *
-
     hidden_number = ' '.join([number[i:i + 4] for i in range(0, len(number), 4)])  # разделяем номер по 4 символа
 
     return ''.join(number_list) + " " + hidden_number
@@ -68,11 +68,13 @@ def to_card_hide(recipient_number):
     :param recipient_number: Принимаем значение по типу MasterCard 1234567890123456
     :return: Возвращаем MasterCard **3456
     """
-    recipient_number = recipient_number
+
     recipient_number_list = recipient_number.split()  # преобразование входной строки в список
+
     number = recipient_number_list.pop(-1)  # забираем именно цифры
 
     number = "**" + number[-4:]
+
     return f"{''.join(recipient_number_list)} {number}"
 
 
@@ -80,10 +82,15 @@ def prepare_one_operation(date, id):
     receivin = date[id]
 
     correct_date = correct_format_date(receivin["date"])  # дата
+
     operation_amount = receivin["operationAmount"]["amount"]  # Сумма перевода
+
     name_operation = receivin["operationAmount"]["currency"]["name"]  # Валюта
+
     description_operation = receivin["description"]  # описание перевода
+
     to_operation = to_card_hide(receivin["to"])  # куда перевод
+
     if "from" in receivin:
         from_operation = from_card_hide(receivin["from"])  # откуда перевод
     else:
