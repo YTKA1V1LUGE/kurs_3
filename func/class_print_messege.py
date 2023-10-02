@@ -4,20 +4,40 @@ import os
 
 
 def load_operation_json():
+    """
+    :return: возвращаем список json
+    """
     utils_path = os.path.dirname(__file__)
     operation_path = os.path.join(utils_path, "operations.json")
     with open(operation_path, "r", encoding="utf=8") as operation_file:
         return json.load(operation_file)
 
 
+def filter_by_status(load_operation_lists):
+    """
+    :param load_operation_lists: получаем общий список операций
+    :return: возвращаем список операций которые выполнены
+    """
+    filter_by = []  # список выполненых операций
+    load_operation = load_operation_lists
+
+    for operation in load_operation:
+        if "state" in operation:
+            if operation["state"] == "EXECUTED":
+                filter_by.append(operation)
+
+    return filter_by
+
+
 def sort_operation(load_operation):
     """
-    :return: Список из дат последних 5 операций
+    :param load_operation: список операция
+    :return: Список из последних 5 операций
     """
-    full_date_operation = sorted(
-        (operation["date"] for operation in load_operation if "date" in operation), reverse=True)[:5]
+    load = load_operation
+    sorted_lol = sorted(load, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%dT%H:%M:%S.%f"), reverse=True)[:5]
 
-    return full_date_operation
+    return sorted_lol
 
 
 def correct_format_date(original_date):
@@ -31,82 +51,62 @@ def correct_format_date(original_date):
     return correct_date
 
 
-def receiving_data(date_operation):
-    """
-    Функция для получениие 5 последних операций
-    :return: список из последних 5 операций
-    """
-    full_date_operation = date_operation
-    date = [operation for operation in load_operation_json()
-            if operation.get("date") in full_date_operation]
-
-    return date
-
-
-card_types = {
-    "Visa Classic": (13, 6),  # 1 - сколько символов с строке, 6 символов которые надо скрыть
-    "MasterCard": (11, 6),
-    "Maestro": (8, 6),
-    "Счет": (5, 6),
-    "Visa Gold": (10, 6),
-    "Visa Platinum": (14, 6)
-}
-
-
 def from_card_hide(sender_number):
     """
     :param sender_number: Получчаем значение карты по типу Visa Classic 1234567890123456
     :return: Возвращаем Visa Classic 1234 56** **** 3456
     """
-    string = ""
+    number_list = sender_number.split()  # преобразование входной строки в список
+    number = number_list.pop(-1)  # забираем именно цифры
 
-    for card_type, (start_index, end_index) in card_types.items():  # цикл в card_types
-        if card_type in sender_number:  # если карта есть в списке
-            sender_number = sender_number[:0] + sender_number[start_index:]  # получаем только цифры
-            sender_number = sender_number[:-(len(sender_number) - 6)] + '*' * (
-                    len(sender_number) - 10) + sender_number[-4:]  # получаем значение по типу "124637******3588"
+    number = number[:6] + '*' * (len(number) - 10) + number[-4:]  # изменяем часть цифр на *
+    hidden_number = ' '.join([number[i:i + 4] for i in range(0, len(number), 4)])  # разделяем номер по 4 символа
 
-            b = [sender_number[i:i + 4] for i in
-                 range(0, len(sender_number), 4)]  # получаем список из номера разделлных по 4
-
-            for el in b:
-                string += el + " "
-
-            return f"{card_type} {string}"
+    return ' '.join(number_list) + " " + hidden_number
 
 
-def to_card_hide(sender_number):
+def to_card_hide(recipient_number):
     """
-    :param sender_number: Принимаем значение по типу MasterCard 1234567890123456
+    :param recipient_number: Принимаем значение по типу MasterCard 1234567890123456
     :return: Возвращаем MasterCard **3456
     """
-    for card_type, values in card_types.items():
-        if card_type in sender_number:
-            sender_number = "**" + sender_number[-4:]
 
-            return f"{card_type} {sender_number}"
+    recipient_number_list = recipient_number.split()  # преобразование входной строки в список
+
+    number = recipient_number_list.pop(-1)  # забираем именно цифры
+    number = "**" + number[-4:]
+
+    return f"{''.join(recipient_number_list)} {number}"
 
 
-def print_message(dates):
+def prepare_one_operation(date, id):
+    receivin = date[id]
+
+    correct_date = correct_format_date(receivin["date"])  # дата
+
+    operation_amount = receivin["operationAmount"]["amount"]  # Сумма перевода
+
+    name_operation = receivin["operationAmount"]["currency"]["name"]  # Валюта
+
+    description_operation = receivin["description"]  # описание перевода
+
+    to_operation = to_card_hide(receivin["to"])  # куда перевод
+
+    if "from" in receivin:
+        from_operation = from_card_hide(receivin["from"])  # откуда перевод
+    else:
+        from_operation = ""
+
+    return correct_date, description_operation, from_operation, to_operation, operation_amount, name_operation,
+
+
+def print_one_operation(date_str):
     """
-    Функция для получение значений по операции и написания сообщения пользователю
-    :return:
+    :param date_str: получаем одну операцию
+    :return: Печать сообщения
     """
-    receivin = dates
+    date_str = date_str
 
-    for operation in receivin:
-        correct_date = correct_format_date(operation["date"])  # дата операции
-        operation_amount = operation["operationAmount"]["amount"]  # Сумма перевода
-        name_operation = operation["operationAmount"]["currency"]["name"]  # Валюта
-        description_operation = operation["description"]  # описание перевода
-        to_operation = to_card_hide(operation["to"])  # куда перевод
-
-        if "from" in operation:
-            from_operation = from_card_hide(operation["from"])  # откуда перевод
-        else:
-            from_operation = ""
-
-        print(f"""{correct_date} {description_operation}
-{from_operation} -> {to_operation}
-{operation_amount} {name_operation}\n""")
-
+    print(f"""{date_str[0]} {date_str[1]}
+{date_str[2]} -> {date_str[3]}
+{date_str[4]} {date_str[5]}""")

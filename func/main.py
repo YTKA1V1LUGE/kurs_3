@@ -1,7 +1,12 @@
 import class_print_messege
 
+message = class_print_messege
 
-operation_json = class_print_messege.load_operation_json()
-sort = class_print_messege.sort_operation(operation_json)
-revers = class_print_messege.receiving_data(sort)
-dates = class_print_messege.print_message(revers)
+read_json = message.load_operation_json()
+filter = message.filter_by_status(read_json)
+sort = message.sort_operation(filter)
+
+for i in range(len(sort)):
+    prepare = message.prepare_one_operation(sort, i)
+    message.print_one_operation(prepare)
+    print()
