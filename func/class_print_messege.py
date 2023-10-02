@@ -60,7 +60,7 @@ def from_card_hide(sender_number):
     number = number[:6] + '*' * (len(number) - 10) + number[-4:]  # изменяем часть цифр на *
     hidden_number = ' '.join([number[i:i + 4] for i in range(0, len(number), 4)])  # разделяем номер по 4 символа
 
-    return ''.join(number_list) + " " + hidden_number
+    return ' '.join(number_list) + " " + hidden_number
 
 
 def to_card_hide(recipient_number):
