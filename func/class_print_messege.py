@@ -26,34 +26,15 @@ def filter_by_status(load_operation_lists):
     return filter_by
 
 
-"""Я не понимаю логику как прописать sort operation, если выводить по одному
-и если использовать датайм то по идеи нужно брать точку отчета от которой идут даты, а мы можем ее не знать
-или сравнивать даты, но если так делать то я придумал лишь использовать метод сортировки по типу пузыря, 
-но тогда кода станет только больше"""
-
-
 def sort_operation(load_operation):
     """
     :param load_operation: список операция
     :return: Список из последних 5 операций
     """
     load = load_operation
-    date_operation = []  # список для дат всех операций
-    operation_list = []  # список для 5 операций
+    sorted_lol = sorted(load, key=lambda x: datetime.strptime(x["date"], "%Y-%m-%dT%H:%M:%S.%f"), reverse=True)[:5]
 
-    for operation in range(len(load)):
-        if "date" in load[operation]:
-            date_operation.append(load[operation]["date"])  # добавляем даты в список
-
-    date_operation.sort()
-    full_date_operation = list(reversed(date_operation[-5:]))  # получаем последние 5 операций
-
-    for date in full_date_operation:
-        for operation in load:
-            if date in operation["date"]:
-                operation_list.append(operation)
-
-    return operation_list
+    return sorted_lol
 
 
 def correct_format_date(original_date):
@@ -72,21 +53,14 @@ def from_card_hide(sender_number):
     :param sender_number: Получчаем значение карты по типу Visa Classic 1234567890123456
     :return: Возвращаем Visa Classic 1234 56** **** 3456
     """
-    sender_number = sender_number
-    string = ""  # строка для объеденения списка цифр
     number_list = sender_number.split()  # преобразование входной строки в список
     number = number_list.pop(-1)  # забираем именно цифры
 
-    number = number[:-(len(number) - 6)] + '*' * (
-            len(number) - 10) + number[-4:]  # изменяем часть цифр на *
+    number = number[:6] + '*' * (len(number) - 10) + number[-4:]  # изменяем часть цифр на *
 
-    b = [number[i:i + 4] for i in
-         range(0, len(number), 4)]  # получаем список из номера разделлных по 4 символа
+    hidden_number = ' '.join([number[i:i + 4] for i in range(0, len(number), 4)])  # разделяем номер по 4 символа
 
-    for el in b:
-        string += el + " "
-
-    return ''.join(number_list) + " " + string
+    return ''.join(number_list) + " " + hidden_number
 
 
 def to_card_hide(recipient_number):
