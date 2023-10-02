@@ -147,16 +147,23 @@ def test_prepare_one_operation(operation_json):
 def test_print_one_operation(capsys, operation_json):
     filter = class_print_messege.filter_by_status(operation_json)
     sort = class_print_messege.sort_operation(filter)
-    prepare = class_print_messege.prepare_one_operation(sort, 0)
 
-    class_print_messege.print_one_operation(prepare)
+    for i in range(len(sort)):
+        prepare = class_print_messege.prepare_one_operation(sort, i)
+        class_print_messege.print_one_operation(prepare)
+        print()
 
     captured = capsys.readouterr()
     expected_output = ('03.07.2019 Перевод организации\n'
                        'MasterCard 7158 30** **** 6758 -> Счет **5560\n'
-                       '8221.37 USD\n')
+                       '8221.37 USD\n'
+                       '\n'
+                       '28.12.2018 Открытие вклада\n'
+                       ' -> Счет **2391\n'
+                       '49192.52 USD\n'
+                       '\n')
+
     assert captured.out == expected_output
 
 
-# Run the tests
 pytest.main()
